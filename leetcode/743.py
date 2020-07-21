@@ -37,30 +37,13 @@ class Solution:
 
         return maxCost if len(cost) == N else -1
 
-        # BFS
-        # WHITE, BLACK, GARY = 0, 1, 2
-        # colors = [WHITE for i in range(N+1)]
-
-        # maxCost = 0
-        # queue = collections.deque()
-        # # init
-        # queue.append((K, 0)) # (node, cost)
-        # colors[K] = GARY
-        # dirtyNodeCount = 1
-        # while len(queue):
-        #     start, cost = queue.popleft()
-        #     if start not in graph: # has no edge
-        #         continue
-        #     for end in graph[start]:
-        #         if colors[end] == WHITE:
-        #             newCost = cost + graph[start][end]
-        #             maxCost = max(newCost, maxCost)
-        #             queue.append((end, newCost))
-        #             colors[end] = GARY
-        #             dirtyNodeCount += 1
-
-        # return maxCost if dirtyNodeCount == N else -1
-
 """
 没啥好说的，带权的单源最短路径问题
+
+T=ElogE
+因为每个边都会被加入到堆中，在一个while循环内，heap操作是logE的复杂度
+while循环内的for循环，通过聚合分析总共需要执行E次，所以总体复杂读是ElogE
+
+S=E+N
+E是堆和图的空间，N是cost的空间
 """
