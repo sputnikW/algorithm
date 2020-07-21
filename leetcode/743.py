@@ -1,38 +1,41 @@
-# import collections
-import queue
+import collections
+import heapq
 
 class Solution:
-    def networkDelayTime(self, times: List[List[int]], N: int, K: int) -> int:
+    def networkDelayTime(self, times, N, K):
         # 用邻接hash表来存储图
-        graph = {}
+        graph = collections.defaultdict(dict)
         for time in times:
             start, end, cost = time
             if start not in graph:
                 graph[start] = {}
             graph[start][end] = cost
 
-
         # Dijkstra
-        q = queue.PriorityQueue() # (cost, vertex)
-        for i in range(1, N+1):
-            if i == K:
-                q.put((0, i))
-            else:
-                q.put((float('inf'), i))
-
+        heap = [] # (cost, vertex)
         maxCost = 0
+        costs = {}
+        heapq.heappush(heap, (0, K))
 
-        while not q.empty():
-            cost, start = q.get()
-            maxCost = max(cost, maxCost)
+        while heap:
+            cost, start = heapq.heappop(heap)
             
-            if start not in graph:
+            if start in costs: # 如果当前点已经有了确定的最短路径，则直接放弃（某种意义上的松弛）
                 continue
-            for end in graph[start]:
+
+            maxCost = max(cost, maxCost)
+            costs[start] = cost
+
+            # 根据已有确定解的节点求其他解
+
+            for end in graph[start]: # 所有当前确定的最短路径的点的后置节点
                 # relax
-                
+                if end in costs: # 如果后置节点已经有了最短路径值，则不再处理
+                    continue
+                # 否则则将可能是更小路径值的塞进去（松弛，只不过把可能的值都放到了堆里，由于堆的性质，能保证一个节点总是先访问最小的值，其他值会被放弃）
+                heapq.heappush(heap, (cost + graph[start][end]))
 
-
+        return maxCost if len(cost) == N else -1
 
         # BFS
         # WHITE, BLACK, GARY = 0, 1, 2
